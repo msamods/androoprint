@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AndroPrint Dashboard</title>
+<style>
+body{margin:0;font-family:sans-serif;background:#f8fafc}
+.card{background:#fff;margin:15px;padding:20px;border-radius:14px}
+button{width:100%;padding:14px;border:none;border-radius:10px;
+background:#2563eb;color:#fff;font-size:16px;margin-top:10px}
+pre{background:#eef;padding:10px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h3>🖨️ Server</h3>
+  <pre id="sid">Loading…</pre>
+</div>
+
+<div class="card">
+  <button onclick="register()">➕ Register New Client</button>
+</div>
+
+<div class="card" id="clientBox" style="display:none">
+  <h3>🔑 Client Credentials</h3>
+  <pre id="cid"></pre>
+  <pre id="pin"></pre>
+</div>
+
+<div class="card">
+  <a href="printer.html"><button style="background:#0f766e">⚙️ Printer Settings</button></a>
+</div>
+
+<script>
+fetch("/server-info")
+.then(r=>r.json())
+.then(d=>sid.innerText=d.server_id);
+
+function register(){
+  fetch("/api/register-client",{method:"POST"})
+  .then(r=>r.json())
+  .then(d=>{
+    clientBox.style.display="block";
+    cid.innerText="CLIENT ID: "+d.client_id;
+    pin.innerText="PIN: "+d.pin;
+  });
+}
+</script>
+
+</body>
+</html>

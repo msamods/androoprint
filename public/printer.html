@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Printer Manager</title>
+
+<style>
+body{margin:0;font-family:system-ui;background:#f1f5f9}
+.header{background:#2563eb;color:#fff;padding:16px;text-align:center}
+.card{background:#fff;margin:14px;padding:16px;border-radius:14px}
+label{font-size:12px;color:#334155}
+input,select{width:100%;padding:12px;margin-top:4px;border-radius:10px;border:1px solid #cbd5e1}
+.toggle{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.actions{display:flex;gap:10px;margin-top:14px}
+button{flex:1;padding:12px;border:none;border-radius:10px;color:#fff}
+.save{background:#16a34a}
+.test{background:#0f766e}
+.add{background:#2563eb;margin:10px}
+</style>
+</head>
+
+<body>
+
+<div class="header">🖨️ Printer Manager</div>
+
+<div class="card">
+  <button class="add" onclick="add('CASHIER')">➕ Add Cashier Printer</button>
+  <button class="add" onclick="add('KITCHEN')">➕ Add Kitchen Printer</button>
+</div>
+
+<div id="list"></div>
+
+<script>
+function load(){
+  fetch("/admin/printers")
+  .then(r=>r.json())
+  .then(p=>{
+    list.innerHTML="";
+    Object.values(p).forEach(render);
+  });
+}
+
+function add(role){
+  fetch("/admin/printers/add",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({role})
+  })
+  .then(r=>r.json())
+  .then(x=>{
+    if(x.error) alert(x.error);
+    else load();
+  });
+}
+
+function render(p){
+  const d=document.createElement("div");
+  d.className="card";
+  d.innerHTML=`
+    <h3>${p.id}</h3>
+
+    <label>Name</label><input value="${p.name}">
+    <label>IP</label><input value="${p.ip}">
+    <label>Port</label><input value="${p.port}">
+    <label>Width</label>
+    <select>
+      <option value="576" ${p.width==="576"?"selected":""}>576</option>
+      <option value="384" ${p.width==="384"?"selected":""}>384</option>
+    </select>
+
+    <div class="toggle"><span>Auto Cut</span>
+      <input type="checkbox" ${p.cut==="true"?"checked":""}>
+    </div>
+
+    <div class="toggle"><span>Enabled</span>
+      <input type="checkbox" ${p.status==="enabled"?"checked":""}>
+    </div>
+
+    <div class="actions">
+      <button class="save">Save</button>
+      <button class="test">Test</button>
+    </div>
+  `;
+
+  const i=d.querySelectorAll("input,select");
+
+  d.querySelector(".save").onclick=()=>{
+    fetch("/admin/printers/save",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        id:p.id,
+        name:i[0].value,
+        ip:i[1].value,
+        port:i[2].value,
+        width:i[3].value,
+        cut:i[4].checked?"true":"false",
+        status:i[5].checked?"enabled":"disabled",
+        role:p.role,
+        encoding:p.encoding,
+        align:p.align,
+        feed:p.feed
+      })
+    }).then(()=>alert("Saved"));
+  };
+
+  d.querySelector(".test").onclick=()=>{
+    fetch("/admin/printers/test",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({id:p.id})
+    }).then(()=>alert("Test sent"));
+  };
+
+  list.appendChild(d);
+}
+
+load();
+</script>
+
+</body>
+</html>

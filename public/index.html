@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AndroPrint Login</title>
+<style>
+body{margin:0;font-family:sans-serif;background:#f1f5f9}
+.card{max-width:360px;margin:80px auto;background:#fff;padding:25px;border-radius:14px}
+input,button{width:100%;padding:14px;margin-top:10px;border-radius:8px;border:1px solid #cbd5e1}
+button{background:#2563eb;color:#fff;border:none;font-size:16px}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🔐 Admin Login</h2>
+  <input id="u" placeholder="Username">
+  <input id="p" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<script>
+function login(){
+  if(u.value==="admin" && p.value==="1231"){
+    location.href="dashboard.html";
+  } else alert("Invalid login");
+}
+</script>
+
+</body>
+</html>
