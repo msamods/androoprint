@@ -9,30 +9,45 @@
  * ✔ Safe JSON handling
  * ✔ Localhost + 127.0.0.1
  */
-
 require("dotenv").config();
+
 const express = require("express");
+const cors = require("cors");               // ✅ FIX 1
 const fs = require("fs");
 const path = require("path");
-const net = require("net");
-const cors = require("cors");
-const crypto = require("crypto");
-const { ThermalPrinter, PrinterTypes } = require("node-thermal-printer");
+const crypto = require("crypto");           // ✅ FIX 2
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ENABLE_AUTH = process.env.ENABLE_AUTH === "true";
 
-const DATA_DIR = __dirname;
-const PRINTER_FILE = path.join(DATA_DIR, "printer.json");
-const CLIENT_FILE = path.join(DATA_DIR, "clients.json");
-const SERVER_ID_FILE = path.join(DATA_DIR, "server.id");
+/* ===============================
+   BASE DIRECTORIES (IMPORTANT)
+================================ */
+
+const ROOT_DIR = path.join(__dirname, "..");
+const CONFIG_DIR = path.join(ROOT_DIR, "config");
+const PUBLIC_DIR = path.join(ROOT_DIR, "public"); // ✅ FIX 3
+
+/* ===============================
+   DATA FILE PATHS
+================================ */
+
+const PRINTER_FILE   = path.join(CONFIG_DIR, "printer.json");
+const CLIENT_FILE    = path.join(CONFIG_DIR, "clients.json");
+const SERVER_ID_FILE = path.join(CONFIG_DIR, "server.id");
+const AUTH_FILE      = path.join(CONFIG_DIR, "auth.json");
+
+/* ===============================
+   MIDDLEWARE
+================================ */
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(PUBLIC_DIR));
 
-/* ---------------- SERVER ID ---------------- */
+
+/*------------------ SERVER ID ---------------- */
 
 function getServerId() {
   if (fs.existsSync(SERVER_ID_FILE)) {

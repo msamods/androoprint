@@ -20,6 +20,13 @@
       "role": "CLIENT",
       "enabled": true,
       "createdAt": "2025-12-19T11:49:46.880Z"
+    },
+    {
+      "id": "clt-fde80a",
+      "pin": "310143",
+      "role": "CLIENT",
+      "enabled": true,
+      "createdAt": "2025-12-19T13:45:45.847Z"
     }
   ]
 }
